@@ -18,8 +18,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Lab10Theme {
-                SeriesApp()
+            Lab10Theme (darkTheme = false){
+                ProductosApp()
             }
         }
     }
