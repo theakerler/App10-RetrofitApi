@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -167,4 +168,53 @@ fun ContenidoSerieEditar(navController: NavHostController, servicio: SerieApiSer
             Text("Grabar", fontSize=16.sp)
         }
     }
+
+    if (grabar) {
+        val objSerie = SerieModel(id,name!!, release_date!!, rating!!.toInt(), category!!)
+        LaunchedEffect(Unit) {
+            if (id == 0)
+                servicio.insertSerie(objSerie)
+            else
+                servicio.updateSerie(id.toString(), objSerie)
+        }
+        grabar = false
+        navController.navigate("series")
     }
+}
+
+@Composable
+fun ContenidoSerieEliminar(navController: NavHostController, servicio: SerieApiService, id: Int) {
+    var showDialog by remember { mutableStateOf(true) }
+    var borrar by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(text = "Confirmar Eliminación") },
+            text = {  Text("¿Está seguro de eliminar la Serie?") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDialog = false
+                        borrar = true
+                    } ) {
+                    Text("Aceptar")
+                }
+            },
+            dismissButton = {
+                Button( onClick = { showDialog = false } ) {
+                    Text("Cancelar")
+                    navController.navigate("series")
+                }
+            }
+        )
+    }
+    if (borrar) {
+        LaunchedEffect(Unit) {
+            // val objSerie = servicio.selectSerie(id.toString())
+            servicio.deleteSerie(id.toString())
+            borrar = false
+            navController.navigate("series")
+        }
+    }
+}
