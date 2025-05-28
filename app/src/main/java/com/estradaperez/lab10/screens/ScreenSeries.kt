@@ -186,34 +186,42 @@ fun ContenidoSerieEditar(navController: NavHostController, servicio: SerieApiSer
 fun ContenidoSerieEliminar(navController: NavHostController, servicio: SerieApiService, id: Int) {
     var showDialog by remember { mutableStateOf(true) }
     var borrar by remember { mutableStateOf(false) }
+    var navegar by remember { mutableStateOf(false) }
 
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
             title = { Text(text = "Confirmar Eliminación") },
-            text = {  Text("¿Está seguro de eliminar la Serie?") },
+            text = { Text("¿Está seguro de eliminar la Serie?") },
             confirmButton = {
                 Button(
                     onClick = {
                         showDialog = false
                         borrar = true
-                    } ) {
+                    }
+                ) {
                     Text("Aceptar")
                 }
             },
             dismissButton = {
-                Button( onClick = { showDialog = false } ) {
+                Button(onClick = {
+                    showDialog = false
+                    navegar = true
+                }) {
                     Text("Cancelar")
-                    navController.navigate("series")
                 }
             }
         )
     }
     if (borrar) {
         LaunchedEffect(Unit) {
-            // val objSerie = servicio.selectSerie(id.toString())
             servicio.deleteSerie(id.toString())
             borrar = false
+            navegar = true
+        }
+    }
+    if (navegar) {
+        LaunchedEffect(Unit) {
             navController.navigate("series")
         }
     }
